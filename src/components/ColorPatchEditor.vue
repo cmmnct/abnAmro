@@ -7,21 +7,22 @@
     </div>
 
     <div class="patch-editor">
-        <input type="range" min="0" max="255" v-model="currentPatch.r">{{ currentPatch.r }}
-        <input type="range" min="0" max="255" v-model="currentPatch.g">{{ currentPatch.g }}
-        <input type="range" min="0" max="255" v-model="currentPatch.b">{{ currentPatch.b }}
-        <input type="range" min="0" max="1" step="0.01" v-model="currentPatch.a">{{ currentPatch.a }}
-        <input type="text"  v-model="currentPatch.name">{{ currentPatch.name }}
+        <input type="range" min="0" max="255" v-model="currentPatch.r">{{ currentPatch.r }}<br>
+        <input type="range" min="0" max="255" v-model="currentPatch.g">{{ currentPatch.g }}<br>
+        <input type="range" min="0" max="255" v-model="currentPatch.b">{{ currentPatch.b }}<br>
+        <input type="range" min="0" max="1" step="0.01" v-model="currentPatch.a">{{ currentPatch.a }}<br>
+        <input type="text"  v-model="currentPatch.name">{{ currentPatch.name }}<br>
+        <div class="thumb-box" :style="{backgroundColor : currentColor}"></div>
     </div>
 
 <div v-if="patches">
-    <div class="thumb" v-for="patch in patches" v-bind:key="patch.id" >{{ patch.name }} {{ `rgba(${patch.r},${patch.g},${patch.b},${patch.a},)`}}</div>
+    <div class="thumb" v-for="patch in patches" v-bind:key="patch.id" :style="{backgroundColor: rgba(patch)}" >{{ patch.name }} {{ `rgba(${patch.r},${patch.g},${patch.b},${patch.a},)`}}</div>
 </div>
     
 </template>
 
 <script setup lang="ts">
-import { ref, watchEffect } from 'vue';
+import { ref, watchEffect, computed } from 'vue';
 import type { Ref } from 'vue'
 
 export type ColorPatch = {
@@ -42,6 +43,22 @@ const currentPatch:Ref<ColorPatch> = ref({
     id:-1,
     name:''
 });
+
+const currentColor = computed(()=>{
+    return `
+    rgba(${currentPatch.value.r},
+    ${currentPatch.value.g},
+    ${currentPatch.value.b},
+    ${currentPatch.value.a})`
+})
+
+function rgba(patch:ColorPatch){
+    return `
+    rgba(${patch.r},
+    ${patch.g},
+    ${patch.b},
+    ${patch.a})`
+}
 
 watchEffect(async () => {
   // this effect will run immediately and then
@@ -81,5 +98,10 @@ const customer = ref ({
 .thumb{
     width: 64px;
     aspect-ratio: 1/1;
+}
+
+.thumb-box{
+    width: 50vw;
+    aspect-ratio: 3/2;
 }
 </style>
